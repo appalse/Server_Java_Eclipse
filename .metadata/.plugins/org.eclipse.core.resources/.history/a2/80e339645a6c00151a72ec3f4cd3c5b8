@@ -1,0 +1,59 @@
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.lang.Thread;
+
+
+public class Sender implements Runnable {
+	public static Logger logger;
+	private ServerSocket serverSocket;
+	public Sender(ServerSocket _serverSocket) {
+		serverSocket = _serverSocket;
+		logger = new Logger();
+	}
+
+	public void run()		
+	{
+		logger.WriteLine("Привет из побочного потока!");
+		send();	
+	}
+	
+	public void start()		
+	{
+		logger.WriteLine("start!");
+	}
+
+	public void DoSending() {
+		logger.WriteLine("DoSending");
+		send();	
+	}
+	private void send() {
+		try {
+			GyroQueue gyroQueue = GyroQueue.GetGyroQueue();
+			logger.WriteLine("Server is started");
+			int i = 0;
+			Socket fromClient;
+			TData data;
+			String text;
+			while(true) {
+				fromClient = serverSocket.accept();
+				++i;
+				logger.WriteLine("Connection " + i);
+				OutputStream os = fromClient.getOutputStream();
+				data = gyroQueue.GetElement();
+				logger.WriteLine("GetElement " + data.getX() + ", " + data.getY() + ", " + data.getZ());
+				if( data != null ) {
+					text = data.getX() + ", " + data.getY() + ", " + data.getZ();
+					os.write(text.getBytes());
+					logger.WriteLine("Text was sent!");
+					
+				} else {
+					logger.WriteLine("data is null");
+				}
+				fromClient.close();
+			}
+		} catch(Exception e) {
+			logger.WriteLine( e.getMessage() );
+		}
+	}
+}

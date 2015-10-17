@@ -1,0 +1,18 @@
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class QueuesHolder {
+	public QueuesHolder() {
+		queuesList = new ArrayList<GyroDataQueue>();
+	}
+	
+	public int AddNewQueue(GyroDataQueue newQueue) {
+		queuesList.add(newQueue);
+		int indexOfAddedQueue = queuesList.size() - 1;
+		return indexOfAddedQueue;
+	}
+	
+	// -------- PRIVATE ---------------------
+	private List<GyroDataQueue> queuesList;
+}

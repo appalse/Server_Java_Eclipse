@@ -1,0 +1,28 @@
+// This class keeps the queue with data.
+// The data can be pushed by main thread, when gyroscope or accelerometer sensor were changed.
+// The data can be extracted by ServerSocket to pass them to the client (via TCP/IP connection)
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+public class GyroDataQueue {
+	// Create queue with data
+	public GyroDataQueue() {
+		queueWithData = new LinkedBlockingQueue <TData>();
+	}
+
+	// Add new element to queue
+	public synchronized boolean Offer( int x, int y, int z) {
+		TData data = new TData( x, y, z);
+		return queueWithData.offer(data);	
+
+	}
+	// Extract element from queue 
+	public synchronized TData Poll() {
+		return queueWithData.poll();
+	}
+	
+	// -------- PRIVATE ---------------------
+	private BlockingQueue<TData> queueWithData;
+
+}

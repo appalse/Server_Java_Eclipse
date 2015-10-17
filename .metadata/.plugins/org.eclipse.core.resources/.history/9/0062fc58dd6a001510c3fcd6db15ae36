@@ -1,0 +1,43 @@
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Sender {
+	public Sender(int _port) {
+		port = _port;
+	}
+	public void Update(int _x, int _y, int _z) {
+		x = _x;
+		y = _y;
+		z = _z;
+	}
+	
+	public void DoSending() {
+		System.out.println("DoSending");
+		send();	
+	}
+	private void send() {
+		try {
+			ServerSocket serverSocket = new ServerSocket(port);
+			System.out.println("Server is started");
+			int i = 0;
+			while(true) {
+				Socket fromClient = serverSocket.accept();
+				++i;
+				System.out.println("Connection " + i);
+				OutputStream os = fromClient.getOutputStream();
+				String text = x + ", " + y + ", " + z;
+				os.write(text.getBytes());
+				System.out.println("Text was sent!");
+				fromClient.close();
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private int port; // = 12346;
+	private int x;
+	private int y;
+	private int z;
+}

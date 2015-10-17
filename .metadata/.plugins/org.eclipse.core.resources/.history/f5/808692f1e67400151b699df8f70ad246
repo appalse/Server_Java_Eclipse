@@ -1,0 +1,72 @@
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+
+
+public class ConnectionListener implements Runnable {
+	public ConnectionListener(Logger _logger, int _portN) {
+		logger = _logger;
+		portN = _portN;
+		shouldWaiting.set(false);
+		servers = new ArrayList<ServerSocket>();
+		senders = new ArrayList<Sender>();
+	}
+
+	public void run() {
+		logger.WriteLine("Hello from the ConnectionListener thread!");
+		shouldWaiting.set(true);
+		waitForNewConnections();			
+	}
+	
+	public void StopListenning() {
+		shouldWaiting.set(false);
+		try {
+			// firstly, stop sending data from existing servers (ServerSockets -> client's Sockets)
+			for( int i = 0; i < senders.size(); ++i ) {
+				senders.get(i).StopSending; 
+			}
+			// clear container
+			senders.clear();
+			// secondly, close connections of existing ServerSockets
+			for( int i = 0; i < servers.size(); ++i ) {
+				servers.get(i).close();
+			}
+			// clear container
+			servers.clear();
+		}  catch(Exception e) {			
+			logger.WriteLine( e.getMessage(), this.getClass().getName(), "StopListenning" );
+		}
+	}
+	
+	// -------- PRIVATE ---------------------
+	
+	private AtomicBoolean shouldWaiting;
+	private Logger logger;
+	private int portN;
+	private List<ServerSocket> servers;
+	private List<Sender> senders;
+	
+	private void waitForNewConnections() {		
+		try{
+			while(shouldWaiting.get()) {
+				ServerSocket serverSocket = new ServerSocket(portN);
+				logger.WriteLine("New serverSocket #" + servers.size() + " was created");
+				servers.add(serverSocket);
+				Sender sender = new Sender(serverSocket.accept(), logger);
+				senders.add(sender);
+				logger.WriteLine("New connection #" + senders.size() + " was detected");				
+				Thread newThread = new Thread(sender);
+				newThread.setName("SenderThrd");
+				newThread.start();
+			}
+		} catch(IOException e) {
+			logger.WriteLine( "ConnectionListener IOException " + e.getMessage(), this.getClass().getName(), "waitForNewConnection"  );
+		} catch(Exception e) {			
+			logger.WriteLine( e.getMessage(), this.getClass().getName(), "waitForNewConnection" );
+		}	
+	}
+}

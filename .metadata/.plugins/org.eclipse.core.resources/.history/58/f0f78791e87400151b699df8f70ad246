@@ -1,0 +1,24 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class GyroDataQueue {
+	// Синглтон
+	public GyroDataQueue() {
+		queueWithData = new LinkedList<TData>();
+	}
+
+	// добавление элемента
+	public boolean Offer( int x, int y, int z) {
+		TData data = new TData( x, y, z);
+		return queueWithData.offer(data);	
+
+	}
+	// извлечение элемента 
+	public TData Poll() {
+		return queueWithData.poll();
+	}
+	
+	// -------- PRIVATE ---------------------
+	private Queue<TData> queueWithData;
+
+}

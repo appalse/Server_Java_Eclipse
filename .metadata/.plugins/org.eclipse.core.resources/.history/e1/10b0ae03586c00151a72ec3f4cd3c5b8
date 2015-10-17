@@ -1,0 +1,37 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class GyroQueue {
+	// Синглтон
+	static public GyroQueue GetGyroQueue() {
+		if( pGyroQueue == null ) {
+			pGyroQueue = new GyroQueue();
+		}
+		return pGyroQueue;
+	}
+
+	// добавление элемента
+	public boolean PutElement( int x, int y, int z) {
+		return pGyroQueue.PutElement(x, y, z);
+
+	}
+	// извлечение элемента 
+	public TData GetElement() {
+		return pGyroQueue.poll();
+	}
+	
+	// -------- PRIVATE ---------------------
+	private Queue<TData> queue;
+
+	static private GyroQueue pGyroQueue = null;	
+	private GyroQueue() {
+		queue = new LinkedList<TData>();
+	}
+	private boolean offer( int x, int y, int z) {
+		TData data = new TData( x, y, z );
+		return queue.offer(data);	
+	}	
+	private TData poll() {
+		return queue.poll();
+	}
+}

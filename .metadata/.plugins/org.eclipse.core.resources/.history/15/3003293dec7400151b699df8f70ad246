@@ -1,0 +1,52 @@
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public class Sender implements Runnable {
+
+	public Sender(Socket _socket, Logger _logger, GyroDataQueue _dataQueue ) {
+		socket = _socket;
+		logger = _logger;
+		dataQueue = _dataQueue;
+		shouldSending.set(false);
+	}
+
+	public void run()		
+	{
+		logger.WriteLine("Hello from Sender thread!");
+		shouldSending.set(true);
+		startSending();	
+	}
+	
+	public void StopSending() {
+		shouldSending.set(false);
+	}
+	
+	// -------- PRIVATE ---------------------
+	private Logger logger;
+	private Socket socket;
+	private AtomicBoolean shouldSending;
+	private GyroDataQueue dataQueue;
+
+	private void startSending() {
+		try {
+			logger.WriteLine("Sending is started!");
+			TData data;
+			String text;
+			while(shouldSending.get()) {
+				OutputStream os = socket.getOutputStream();
+				data = dataQueue.Poll();
+				if( data != null ) {
+					text = data.getX() + ", " + data.getY() + ", " + data.getZ();
+					os.write(text.getBytes());
+					logger.WriteLine("Text was sent! dataQueue.Poll() : " + data.getX() + ", " + data.getY() + ", " + data.getZ());
+				}
+			}
+		} catch(IOException e) {
+			logger.WriteLine( "Sender IOException" + e.getMessage(), this.getClass().getName(), "startSending" );			
+		} catch(Exception e) {			
+			logger.WriteLine( e.getMessage(), this.getClass().getName(), "startSending" );
+		}
+	}
+}

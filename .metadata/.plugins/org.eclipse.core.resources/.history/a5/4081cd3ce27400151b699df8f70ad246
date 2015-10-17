@@ -1,0 +1,23 @@
+
+public class TData {
+	public TData() {
+		x = y = z = 0;
+	}
+	public TData( int _x, int _y, int _z ) {
+		x = _x;
+		y = _y;
+		z = _z;
+	}
+	public int getX() {
+		return x;
+	}
+	public int getY() {
+		return y;
+	}
+	public int getZ() {
+		return z;
+	}
+	private int x;
+	private int y;
+	private int z;
+}

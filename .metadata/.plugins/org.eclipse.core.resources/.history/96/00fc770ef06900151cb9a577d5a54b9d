@@ -1,0 +1,29 @@
+import java.net.*;
+import java.io.*;
+
+public class ServerMain  {
+	public static void main(String[] args) {
+		System.out.println("Hello");
+		int port = 12345;
+		try {
+			ServerSocket serverSocket = new ServerSocket(port);
+			System.out.println("Server is started");
+			int i = 0;
+			while(true) {
+				Socket fromClient = serverSocket.accept();
+				++i;
+				System.out.println("Connection " + i);
+				InputStream is = fromClient.getInputStream();
+				byte buf[] = new byte[64*1024];
+				int r = is.read(buf);
+				String data = new String(buf, 0, r);
+				System.out.println(data);
+				fromClient.close();
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}

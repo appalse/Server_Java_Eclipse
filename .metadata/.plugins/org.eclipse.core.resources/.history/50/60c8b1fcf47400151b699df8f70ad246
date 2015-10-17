@@ -1,0 +1,108 @@
+import java.io.*;
+import java.util.Random;
+import java.lang.Thread;
+
+
+public class GuiMainThread  {
+	private static Logger logger;
+	private static boolean isSrvRunning;
+	private static int portN; // can get it from GUI-form
+	private static ConnectionListener connectionListener = null;
+	private static QueuesHolder queuesHolder = null;
+
+	public static void main(String[] args) {
+		try{ 
+			logger = new Logger();
+			// preparation for server running 
+			CreateForm();			
+			portN = 12346;
+			queuesHolder = new QueuesHolder(logger);
+			connectionListener = new ConnectionListener(logger, portN, queuesHolder);
+			
+
+			StartSrv();
+			InputStream is = System.in;
+			logger.WriteLine("Press any key to add data to the queue. 0 - to exit, 1 - to stop server, 2 - to start server");
+			int result = is.read();
+			// ascii code of "0" is 48
+			while(result != 48) { 
+				if( result == 13 || result == 10 ) {
+					continue;
+				}
+				if( result == 49) {
+					StopSrv();
+				} else if(result == 50 ) {
+					StartSrv();
+				} else {
+					PushData();
+				}				
+				result = is.read();
+			}			
+			StopSrv();
+			logger.WriteLine("Program is finished");
+		} catch( Exception e ) {
+			logger.WriteLine(e.getMessage(), GuiMainThread.class.getName(), "main" );
+		}		
+	}
+	
+	// preparation of variables;
+	public static void CreateForm() {
+		try {
+			logger.WriteLine("Start programm");			
+			isSrvRunning = false; 			
+		} catch( Exception e ) {
+			logger.WriteLine(e.getMessage(), GuiMainThread.class.getName(), "CreateForm" );
+		}
+	}
+	
+	// Start listening for connections from client
+	public static void StartSrv() {
+		try{ 
+			if( !isSrvRunning && connectionListener != null && queuesHolder != null ) {				
+				Thread newThread = new Thread(connectionListener);
+				newThread.setName("ConnectionListenerThrd");
+				newThread.start();
+				isSrvRunning = true;
+			}
+		} catch ( Exception e ) {
+			logger.WriteLine(e.getMessage(), GuiMainThread.class.getName(), "StartSrv" );
+		}
+	}
+
+	// Stop all current connections between Server and Client
+	// Stop listening for any connection
+	public static void StopSrv() {
+		try{ 
+			if( isSrvRunning && connectionListener != null ) {				
+				connectionListener.StopListenning();;
+				isSrvRunning = false;
+			}
+		} catch ( Exception e ) {
+			logger.WriteLine(e.getMessage(), GuiMainThread.class.getName(), "StopSrv" );
+		}
+	}
+	
+	public static void SensorChanged() {
+		// Here is the code which extracts data from Andriod's gyroscope and accelerometer sensor
+		// and passes it to the container with queues data (queuesHolder)
+		
+		// Currently, we left it empty becuase it repeats the logic of PushData() method
+	}
+	
+	// This function is temporary and it is kept only for debugging
+	public static void PushData() {
+		try{
+			if( queuesHolder != null) {
+				Random rnd = new Random();	
+				int x = rnd.nextInt(10);
+				int y = rnd.nextInt(10);
+				int z = rnd.nextInt(10);
+				logger.WriteLine("put element in queue " + x + ", " + y + ", " + z);
+				queuesHolder.PushDataToQueues(x, y, z);
+			}	
+		} catch ( Exception e ) {
+			logger.WriteLine(e.getMessage(), GuiMainThread.class.getName(), "PushData" );
+		}
+	}
+
+}

@@ -1,0 +1,43 @@
+import java.net.*;
+import java.io.*;
+import java.util.Random;
+import java.lang.Thread;
+import java.net.Socket;
+
+
+public class ServerMain  {
+
+	public static void main(String[] args) {
+		Logger logger = Logger.GetLogger();
+		GyroQueue gyroQueue = GyroQueue.GetGyroQueue();
+		logger.WriteLine("Start server");
+
+		Random rnd = new Random();
+		
+		int x, y, z;
+		int port1 = 12346;
+		try {
+			ConnectionListener connectionListener = new ConnectionListener(port1);
+			Thread thrListener = new Thread(connectionListener);
+			thrListener.start();
+					
+			logger.WriteLine("before while");
+			
+			// данные с гироскопа обновл€еютс€ каждую милисекунду и отправл€ютс€ в Sender, который в другом потоке
+			while(true) {
+				x = rnd.nextInt(10);
+				y = rnd.nextInt(10);
+				z = rnd.nextInt(10);
+				logger.WriteLine("put element in queue " + x + ", " + y + ", " + z);
+				if( !gyroQueue.PutElement(x, y, z) ) {
+					logger.WriteLine("error in PutElement");
+				}
+				Thread.sleep(2000); // 5 sec of sleeping
+			}
+			
+		} catch( Exception e ) {
+			logger.WriteLine(e.getMessage());
+		}
+	}
+
+}

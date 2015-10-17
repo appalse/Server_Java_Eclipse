@@ -1,0 +1,31 @@
+import java.util.concurrent.atomic.AtomicInteger;
+
+
+public class TData {
+	public TData() {
+		x.set(0);
+		y.set(0);
+		z.set(0);
+	}
+	public TData( int _x, int _y, int _z ) {
+		x.set(_x);
+		y.set(_y);
+		z.set(_z);
+	}
+	public int getX() {
+		return x.get();
+	}
+	public int getY() {
+		return y.get();
+	}
+	public int getZ() {
+		return z.get();
+	}
+	public synchronized String getString() {
+		return "x = " + Integer.toString(x.get()) + ", y = " + Integer.toString(y.get()) + ", z = " + Integer.toString(z.get());
+	}
+
+	private AtomicInteger x;
+	private AtomicInteger y;
+	private AtomicInteger z;
+}

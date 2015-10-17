@@ -1,0 +1,60 @@
+import java.net.*;
+import java.io.*;
+import java.util.Random;
+import java.lang.Thread;
+import java.net.Socket;
+
+
+public class GuiMainThread  {
+	private static Logger logger;
+	private static boolean isSrvRunning;
+	private static int portN; // взять из GUI формы
+	private static ConnectionListener connectionListener;
+
+	public static void main(String[] args) {
+		OnCreate();
+
+		Random rnd = new Random();		
+		int x, y, z;		
+		try {
+			ConnectionListener connectionListener = new ConnectionListener(port1);
+			Thread thrListener = new Thread(connectionListener);
+			thrListener.start();
+					
+
+			// данные с гироскопа обновляеются каждую милисекунду и отправляются в Sender, который в другом потоке
+			while(true) {
+				x = rnd.nextInt(10);
+				y = rnd.nextInt(10);
+				z = rnd.nextInt(10);
+				logger.WriteLine("put element in queue " + x + ", " + y + ", " + z);
+				if( !gyroDataQueue.PutElement(x, y, z) ) {
+					logger.WriteLine("error in PutElement");
+				}
+				Thread.sleep(2000); // 2 sec of sleeping
+			}
+		} catch( Exception e ) {
+			logger.WriteLine(e.getMessage(), GuiMainThread.class.getName(), "main" );
+		}
+	}
+	
+	public static void OnCreate() {
+		try {
+			logger.WriteLine("Start programm");
+			logger = new Logger();
+			portN = 12346;
+			isSrvRunning = false; // пока сервер ни один не работает
+			connectionListener = new ConnectionListener(portN);
+		} catch( Exception e ) {
+			logger.WriteLine(e.getMessage(), GuiMainThread.class.getName(), "OnCreate" );
+		}
+	}
+	
+	public static void PressBtn_StartSrv() {
+		if( !isSrvRunning ) {
+			
+			isSrvRunning = true;
+		}
+	}
+
+}
