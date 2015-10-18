@@ -12,15 +12,15 @@ public class QueuesHolder {
 	
 	public synchronized GyroDataQueue AddNewQueue() {
 		int indexOfAddedQueue = -1;
-		GyroDataQueue newQueue = new GyroDataQueue();		
-		if( queuesList != null && newQueue != null ) {
+		GyroDataQueue newQueue = new GyroDataQueue();
+		if( queuesList != null && newQueue != null ) {			
 			queuesList.add(newQueue);
 			indexOfAddedQueue = queuesList.size() - 1;
 		} 
-		if( indexOfAddedQueue < 0 ) {
+		if(indexOfAddedQueue < 0) {
 			return null;
 		} else {
-			return queuesList.get(indexOfAddedQueue);
+			return newQueue;
 		}
 	}
 	
@@ -28,16 +28,48 @@ public class QueuesHolder {
 		if(queuesList != null) {
 			try {
 				for( int i = 0; i < queuesList.size(); ++i ) {
+					logger.WriteLine("put element in queue #" + ( i + 1 ) + ": " + x + ", " + y + ", " + z);
 					queuesList.get(i).Offer(x, y, z);
 				}
 			} catch( Exception e ) {
-				logger.WriteLine(e.getMessage(), GuiMainThread.class.getName(), "PushDataToQueues" );
+				logger.WriteLine(e.getMessage(), getClassName(), "PushDataToQueues" );
 			}
 		}
+	}
+	
+	// Delete all queues from queue list, when server is stopped
+	public synchronized void DeleteAllQueues() {
+		if(queuesList != null) {
+			try {
+				logger.WriteLine("Queue list is deleted " );
+				queuesList.clear();
+			} catch( Exception e ) {
+				logger.WriteLine(e.getMessage(),getClassName(), "DeleteAllQueues" );
+			}
+		}
+	}
+	
+	// Remove 1 queue from queue list, when client is disconnected
+	public synchronized void RemoveQueue( GyroDataQueue dataQueue ) {
+		if(queuesList != null && dataQueue != null ) {
+			try {
+				int indexOfQueue = queuesList.indexOf(dataQueue);
+				if( indexOfQueue < 0 ) {
+					throw new Exception("Specified queue wasn't found");
+				}				
+				queuesList.remove(indexOfQueue);
+			} catch( Exception e ) {
+				logger.WriteLine(e.getMessage(),getClassName(), "RemoveQueue" );
+			}
+		}		
 	}
 
 	
 	// -------- PRIVATE ---------------------
 	private List<GyroDataQueue> queuesList = null;
 	private Logger logger;
+	
+	private String getClassName() {
+		return this.getClass().getName();
+	}
 }

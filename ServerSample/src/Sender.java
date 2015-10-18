@@ -11,11 +11,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Sender implements Runnable {
 
-	public Sender(Socket _socket, Logger _logger, GyroDataQueue _dataQueue ) {
+	public Sender(Socket _socket, Logger _logger, QueuesHolder _queuesHolder ) {
 		socket = _socket;
 		logger = _logger;
-		dataQueue = _dataQueue;
+		queuesHolder = _queuesHolder;
 		shouldSending = new AtomicBoolean(false);
+		// Create the queue with data (from gyroscope and accelerometer sensors)
+		// The client will receive the data from this queue
+		dataQueue = queuesHolder.AddNewQueue();
 	}
 
 	// Run thread. 
@@ -23,7 +26,11 @@ public class Sender implements Runnable {
 	{
 		logger.WriteLine("Hello from Sender thread!");
 		shouldSending.set(true);
-		startSending();	
+		if(dataQueue != null) {
+			startSending();	
+		} else {
+			logger.WriteLine("queuesHolder.AddNewQueue() cannot add queue!", getCurrentThreadName(), getClassName(), "run");
+		} 
 	}
 	
 	// Stop sending data to the client
@@ -35,6 +42,7 @@ public class Sender implements Runnable {
 	private Logger logger;
 	private Socket socket;
 	private AtomicBoolean shouldSending;
+	private QueuesHolder queuesHolder;
 	private GyroDataQueue dataQueue;
 
 	// Start sending gyroscope and accelerometer data from specified data queue to the client 
@@ -55,6 +63,7 @@ public class Sender implements Runnable {
 		} catch(IOException e) {
 			if( e.getMessage().contains("Connection reset by peer: socket write error")) {
 				logger.WriteLine( Thread.currentThread().getName() + " was closed by client", getCurrentThreadName(), getClassName(), "waitForNewConnection"  );
+				queuesHolder.RemoveQueue(dataQueue);
 			} else {
 				logger.WriteLine( "Sender IOException " + e.getMessage(), getCurrentThreadName(), getClassName(), "startSending" );	
 			}

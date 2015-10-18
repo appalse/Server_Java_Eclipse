@@ -4,4 +4,15 @@
 <fullyQualifiedTypeName name="java.util.Queue"/>
 <fullyQualifiedTypeName name="java.util.LinkedList"/>
 <fullyQualifiedTypeName name="java.io.IOException"/>
+<fullyQualifiedTypeName name="ConnectionListener"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="java.util.concurrent.SynchronousQueue"/>
+<fullyQualifiedTypeName name="GyroDataQueue"/>
+<fullyQualifiedTypeName name="java.util.concurrent.LinkedBlockingQueue"/>
+<fullyQualifiedTypeName name="java.util.concurrent.BlockingQueue"/>
+<fullyQualifiedTypeName name="java.util.concurrent.atomic.AtomicInteger"/>
+<fullyQualifiedTypeName name="java.io.InputStream"/>
+<fullyQualifiedTypeName name="java.util.concurrent.atomic.AtomicBoolean"/>
+<fullyQualifiedTypeName name="java.net.Socket"/>
 </qualifiedTypeNameHistroy>

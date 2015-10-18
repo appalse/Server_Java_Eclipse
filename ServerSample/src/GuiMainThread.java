@@ -77,7 +77,8 @@ public class GuiMainThread  {
 	public static void StopSrv() {
 		try{ 
 			if( isSrvRunning && connectionListener != null ) {				
-				connectionListener.StopListenning();;
+				connectionListener.StopListenning();
+				queuesHolder.DeleteAllQueues();
 				isSrvRunning = false;
 			}
 		} catch ( Exception e ) {
@@ -100,7 +101,7 @@ public class GuiMainThread  {
 				int x = rnd.nextInt(10);
 				int y = rnd.nextInt(10);
 				int z = rnd.nextInt(10);
-				logger.WriteLine("put element in queue " + x + ", " + y + ", " + z);
+				
 				queuesHolder.PushDataToQueues(x, y, z);
 			}	
 		} catch ( Exception e ) {
