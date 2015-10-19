@@ -10,9 +10,9 @@ public class QueuesHolder {
 		queuesList = new ArrayList<GyroDataQueue>();
 	}
 	
-	public synchronized GyroDataQueue AddNewQueue( Object mutex ) {
+	public synchronized GyroDataQueue AddNewQueue() {
 		int indexOfAddedQueue = -1;
-		GyroDataQueue newQueue = new GyroDataQueue(mutex);
+		GyroDataQueue newQueue = new GyroDataQueue();
 		if( queuesList != null && newQueue != null ) {			
 			queuesList.add(newQueue);
 			indexOfAddedQueue = queuesList.size() - 1;

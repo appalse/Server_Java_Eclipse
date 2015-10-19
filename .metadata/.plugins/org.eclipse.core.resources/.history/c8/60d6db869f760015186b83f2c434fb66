@@ -10,18 +10,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class GyroDataQueue {
 	// Create queue with data
-	public GyroDataQueue(Object _mutex) {
+	public GyroDataQueue(Object lock) {
 		queueWithData = new LinkedBlockingQueue<TData>();
-		mutex = _mutex;
+		this.lock = lock;
 	}
 
 	// Add new element to queue
 	public synchronized boolean Offer( int x, int y, int z) {
 		TData data = new TData( x, y, z);
 		boolean result = queueWithData.offer(data);
-		synchronized( mutex ) {
-			mutex.notify();
-		}
+		lock.notify();
 		return result;	
 
 	}
@@ -36,5 +34,5 @@ public class GyroDataQueue {
 	
 	// -------- PRIVATE ---------------------
 	private BlockingQueue<TData> queueWithData;
-	private Object mutex;
+	private Object lock;
 }

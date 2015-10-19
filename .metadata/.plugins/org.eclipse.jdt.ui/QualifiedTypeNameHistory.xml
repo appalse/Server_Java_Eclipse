@@ -7,7 +7,6 @@
 <fullyQualifiedTypeName name="ConnectionListener"/>
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
-<fullyQualifiedTypeName name="java.util.concurrent.SynchronousQueue"/>
 <fullyQualifiedTypeName name="GyroDataQueue"/>
 <fullyQualifiedTypeName name="java.util.concurrent.LinkedBlockingQueue"/>
 <fullyQualifiedTypeName name="java.util.concurrent.BlockingQueue"/>
@@ -15,4 +14,5 @@
 <fullyQualifiedTypeName name="java.io.InputStream"/>
 <fullyQualifiedTypeName name="java.util.concurrent.atomic.AtomicBoolean"/>
 <fullyQualifiedTypeName name="java.net.Socket"/>
+<fullyQualifiedTypeName name="java.util.concurrent.SynchronousQueue"/>
 </qualifiedTypeNameHistroy>
